@@ -41,7 +41,7 @@ Backend System
   "tasks": "linked list of taskIds"
 }
 ```
-### Project
+### User
 ```json
 {
   "id": "string/ObjectID",
