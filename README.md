@@ -123,17 +123,50 @@ const typeDefs = gql`
 ```js
 const { ApolloServer, gql } = require("apollo-server");
 
+/*
+ updateProject will use an object called updatedProjectData that stores the below optional keys
+ updateTask will use an object called updatedTaskData that stores the below optional keys
+ updateColumn will use an object called updatedColumnData that stores the below optional keys
+*/
 const typeDefs = gql`
     type Mutation {
-        addProject
-        updateProject
-        deleteProject
-        addTask
-        updateTask
-        deleteTask
-        addColumn
-        updateColumn
-        deleteColumn
+        addProject(
+            name: String!
+            owner: String!
+            description: String
+        ): Project
+        updateProject(
+            name: String
+            description: String
+            contributors: [String]
+            columns: [String]
+            tasks: [String]
+        ): Project
+        deleteProject(id: String!): Project
+        addTask(
+            title: String!
+            description: String
+        ): Task
+        updateTask(
+            title: String
+            description: String
+            backlog: String -> {project, release, sprint}
+            priority: Int
+            storyPoints: Int
+            status: String
+            assignee: String
+        ): Task
+        deleteTask(id: String!): Task
+        addColumn(
+            name: String!
+            description: String
+        ): Column
+        updateColumn(
+            name: String
+            description: String
+            tasks: [String]
+        ): Column
+        deleteColumn(id: String!): Column
     }
 `;
 ```
