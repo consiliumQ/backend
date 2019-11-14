@@ -1,5 +1,6 @@
-const { ApolloServer, gql } = requiire("apollo-server");
+const { ApolloServer } = require("apollo-server");
 
+const typeDefs = require("./schema").typeDefs;
 const Query = require("./resolvers/Query");
 const Mutation = require("./resolvers/Mutation");
 
@@ -9,7 +10,7 @@ const resolvers = {
 };
 
 const server = new ApolloServer({
-  typeDefs: "./schema.graphql",
+  typeDefs,
   resolvers
 });
 

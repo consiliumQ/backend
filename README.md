@@ -7,8 +7,9 @@ Backend System
 
 - [Express.js](https://expressjs.com/)
 - [MongoDB](https://www.mongodb.com/) with [Node Driver](https://mongodb.github.io/node-mongodb-native/)
-- [TypeScript](https://www.typescriptlang.org/)
+  <!-- - [TypeScript](https://www.typescriptlang.org/) -->
 - [GraphQL](https://graphql.org/)
+- [Redis]
   ​
 
 ## MongoDB Collections
