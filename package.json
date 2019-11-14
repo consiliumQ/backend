@@ -1,0 +1,23 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Backend System ​",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/consiliumQ/backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/consiliumQ/backend/issues"
+  },
+  "homepage": "https://github.com/consiliumQ/backend#readme",
+  "dependencies": {
+    "apollo-server": "^2.9.9",
+    "graphql": "^14.5.8"
+  }
+}
