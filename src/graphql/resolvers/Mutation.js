@@ -9,13 +9,13 @@ const updateColumn = async (parent, args) => {};
 const deleteColumn = async (parent, args) => {};
 
 module.exports = {
-  addProject,
-  updateProject,
-  deleteProject,
-  addTask,
-  updateTask,
-  deleteTask,
-  addColumn,
-  updateColumn,
-  deleteColumn
+    addProject,
+    updateProject,
+    deleteProject,
+    addTask,
+    updateTask,
+    deleteTask,
+    addColumn,
+    updateColumn,
+    deleteColumn,
 };
