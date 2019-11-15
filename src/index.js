@@ -1,19 +1,9 @@
-const { ApolloServer } = require("apollo-server");
+require('dotenv').config();
+const server = require('./graphql');
+const { seed } = require('./database');
 
-const typeDefs = require("./schema").typeDefs;
-const Query = require("./resolvers/Query");
-const Mutation = require("./resolvers/Mutation");
+seed()
+    .then(() => console.log('seeding succeeded'))
+    .catch(e => console.log('seeding failed', e));
 
-const resolvers = {
-  Query,
-  Mutation
-};
-
-const server = new ApolloServer({
-  typeDefs,
-  resolvers
-});
-
-server.listen().then(({ url }) => {
-  console.log(`🚀  Server ready at ${url} 🚀`);
-});
+server.listen().then(({ url }) => console.log(`ConsiliumQ backend service running on ${url}`));
