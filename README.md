@@ -1,7 +1,6 @@
 # backend
 
 Backend System
-​
 
 ## Technologies
 
@@ -9,193 +8,181 @@ Backend System
 - [MongoDB](https://www.mongodb.com/) with [Node Driver](https://mongodb.github.io/node-mongodb-native/)
   <!-- - [TypeScript](https://www.typescriptlang.org/) -->
 - [GraphQL](https://graphql.org/)
-- [Redis]
-  ​
+- [Redis](https://redis.io/)
 
 ## MongoDB Collections
 
 ### Project
 
+#### Data Model
+
 ```json
 {
-  "id": "string/ObjectID",
-  "name": "string",
-  "description": "string",
-  "owner": "userId",
-  "contributors": "userId[]",
-  "tasks": "taskId[]",
-  "columns": "columnId[]"
+    "id": "ObjectId",
+    "name": "string",
+    "description": "string",
+    "ownerId": "userId",
+    "contributorIds": "userId[]",
+    "taskIds": "taskId[]",
+    "columnIds": "columnId[]"
+}
+```
+
+#### GraphQL Type
+
+```graphql
+type Project {
+    id: Id!
+    name: String!
+    description: String
+    owner: User
+    contributers: [User]
+    tasks: [Task]!
+    columns: [Column]! # order matters
 }
 ```
 
 ### Task
 
+#### Data Model
+
 ```json
 {
-  "id": "string/ObjectID",
-  "title": "string",
-  "description": "string",
-  "backlog": "{project, release, sprint}",
-  "priority": "int",
-  "storyPoints": "int",
-  "status": "columnId",
-  "assignee": "userId"
+    "id": "ObjectId",
+    "title": "string",
+    "description": "string",
+    "backlog": "{project, release, sprint}",
+    "priority": "int",
+    "storyPoints": "int",
+    "projectId": "projectId"
+    "columnId": "columnId", // column ID to which the task is belonged
+    "assigneeId": "userId"
+}
+```
+
+#### GraphQL Type
+
+```graphql
+enum Backlog {
+    project
+    release
+    sprint
+}
+
+type Task {
+    id: Id!
+    title: String!
+    description: String
+    backlog: Backlog! # when created the task, if not specified, default to `project`
+    priority: Int
+    storyPoints: Int
+    project: Project!
+    column: Column! # when first created, put the task in first columns of the project
+    assignee: User
 }
 ```
 
 ### Column
 
+#### Data Model
+
 ```json
 {
-  "id": "string/ObjectID",
+  "id": "ObjectId",
   "name": "string",
   "description": "string",
+  "projectId": "projectId"
   "tasks": "linked list of taskIds"
+}
+```
+
+#### GraphQL Type
+
+```graphql
+type Column {
+    id: Id!
+    name: String!
+    description: String
+    project: Project!
+    tasks: [Task]! (order matters)
 }
 ```
 
 ### User
 
+#### Data Model
+
 ```json
 {
-  "id": "string/ObjectID",
+  "id": "ObjectId",
   "username": "string",
   "email": "string"
 }
 ```
 
-​
+#### GraphQL Type
 
-## GraphQL Types
-
-### User
-
-```js
-const { ApolloServer, gql } = require("apollo-server");
-​
-const typeDefs = gql`
-    type User {
-        id: Id!
-        projects: [Project]!
-    }
-`;
+```graphql
+type User {
+    id: Id!
+    username: String
+    email: String
+    projects: [Project]!
+}
 ```
-
-### Projects
-
-```js
-const { ApolloServer, gql } = require("apollo-server");
-​
-const typeDefs = gql`
-    type Project {
-        id: Id!
-        tasks: [Task]!
-        columns: [Column]! (order matters)
-        owner: User (logged in user)
-        contributers: [User]
-    }
-`;
-```
-
-### Column
-
-```js
-const { ApolloServer, gql } = require("apollo-server");
-​
-const typeDefs = gql`
-    type Column {
-        id: Id!
-        project: Project!
-        tasks: [Task]! (order matters)
-    }
-`;
-```
-
-### Task
-
-```js
-const { ApolloServer, gql } = require("apollo-server");
-​
-const typeDefs = gql`
-    type Task {
-        id: Id!
-        project: Project!
-        column: Column!
-        assignee: User
-    }
-`;
-```
-
-​
 
 ## GraphQL Queries
 
-```js
-const { ApolloServer, gql } = require("apollo-server");
-​
-// Authentication will pass the logged in User as ownerId and userId
-const typeDefs = gql`
-    type Query {
-        projects(ownerId: String!): [Project]
-        project(projectId: String!): Project
-        tasks(projectId: String!, columnId: String, taskId: String): [Task]
-        task(taskId: String!): Task
-        user(userId: String!): User
-    }
-`;
+```graphql
+type Query {
+    projects(ownerId: String!): [Project]
+    project(projectId: String!): Project
+    tasks(projectId: String!, columnId: String, taskId: String): [Task]
+    task(taskId: String!): Task
+    user(userId: String!): User
+}
 ```
-
-​
 
 ## GraphQL Mutations
 
-```js
-const { ApolloServer, gql } = require("apollo-server");
-​
-/*
- updateProject will use an object called updatedProjectData that stores the below optional keys
- updateTask will use an object called updatedTaskData that stores the below optional keys
- updateColumn will use an object called updatedColumnData that stores the below optional keys
-*/
-const typeDefs = gql`
-    type Mutation {
-        addProject(
-            name: String!
-            owner: String!
-            description: String
-        ): Project
-        updateProject(
-            name: String
-            description: String
-            contributors: [String]
-            columns: [String]
-            tasks: [String]
-        ): Project
-        deleteProject(id: String!): Project
-        addTask(
-            title: String!
-            description: String
-        ): Task
-        updateTask(
-            title: String
-            description: String
-            backlog: String -> {project, release, sprint}
-            priority: Int
-            storyPoints: Int
-            status: String
-            assignee: String
-        ): Task
-        deleteTask(id: String!): Task
-        addColumn(
-            name: String!
-            description: String
-        ): Column
-        updateColumn(
-            name: String
-            description: String
-            tasks: [String]
-        ): Column
-        deleteColumn(id: String!): Column
-    }
-`;
+```graphql
+type Mutation {
+    addProject(
+        name: String!
+        owner: String!
+        description: String
+    ): Project
+    updateProject(
+        name: String
+        description: String
+        contributors: [String]
+        columns: [String]
+        tasks: [String]
+    ): Project
+    deleteProject(id: String!): Project
+    addTask(
+        title: String!
+        description: String
+    ): Task
+    updateTask(
+        title: String
+        description: String
+        backlog: String -> {project, release, sprint}
+        priority: Int
+        storyPoints: Int
+        status: String
+        assignee: String
+    ): Task
+    deleteTask(id: String!): Task
+    addColumn(
+        name: String!
+        description: String
+    ): Column
+    updateColumn(
+        name: String
+        description: String
+        tasks: [String]
+    ): Column
+    deleteColumn(id: String!): Column
+}
 ```
