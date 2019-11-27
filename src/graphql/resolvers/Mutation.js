@@ -1,12 +1,12 @@
-const addProject = async (parent, args) => {};
-const updateProject = async (parent, args) => {};
-const deleteProject = async (parent, args) => {};
-const addTask = async (parent, args) => {};
-const updateTask = async (parent, args) => {};
-const deleteTask = async (parent, args) => {};
-const addColumn = async (parent, args) => {};
-const updateColumn = async (parent, args) => {};
-const deleteColumn = async (parent, args) => {};
+const addProject = async () => {};
+const updateProject = async () => {};
+const deleteProject = async () => {};
+const addTask = async () => {};
+const updateTask = async () => {};
+const deleteTask = async () => {};
+const addColumn = async () => {};
+const updateColumn = async () => {};
+const deleteColumn = async () => {};
 
 module.exports = {
     addProject,

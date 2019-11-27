@@ -1,12 +1,12 @@
 const { User } = require('../../database');
 
-const projects = async (parent, args) => {};
+const projects = async () => {};
 
-const project = async (parent, args) => {};
+const project = async () => {};
 
-const tasks = async (parent, args) => {};
+const tasks = async () => {};
 
-const task = async (parent, args) => {};
+const task = async () => {};
 
 const user = async (_, args) => {
     const foundUser = await User.getUserById(args.userId);
