@@ -1,7 +1,13 @@
 const seed = require('./seed');
-const User = require('./User');
+const Users = require('./Users');
+const Projects = require('./Projects');
+const Columns = require('./Columns');
+const Tasks = require('./Tasks');
 
 module.exports = {
     seed,
-    User,
+    Users,
+    Projects,
+    Columns,
+    Tasks,
 };

@@ -18,7 +18,7 @@ Backend System
 
 ```json
 {
-    "id": "ObjectId",
+    "_id": "ObjectId",
     "name": "string",
     "description": "string",
     "ownerId": "userId",
@@ -32,7 +32,7 @@ Backend System
 
 ```graphql
 type Project {
-    id: Id!
+    _id: Id!
     name: String!
     description: String
     owner: User
@@ -48,14 +48,14 @@ type Project {
 
 ```json
 {
-    "id": "ObjectId",
+    "_id": "ObjectId",
     "title": "string",
     "description": "string",
     "backlog": "{project, release, sprint}",
     "priority": "int",
     "storyPoints": "int",
-    "projectId": "projectId"
-    "columnId": "columnId", // column ID to which the task is belonged
+    "projectId": "projectId",
+    "columnId": "columnId",
     "assigneeId": "userId"
 }
 ```
@@ -70,7 +70,7 @@ enum Backlog {
 }
 
 type Task {
-    id: Id!
+    _id: Id!
     title: String!
     description: String
     backlog: Backlog! # when created the task, if not specified, default to `project`
@@ -88,10 +88,10 @@ type Task {
 
 ```json
 {
-  "id": "ObjectId",
+  "_id": "ObjectId",
   "name": "string",
   "description": "string",
-  "projectId": "projectId"
+  "projectId": "projectId",
   "tasks": "linked list of taskIds"
 }
 ```
@@ -100,7 +100,7 @@ type Task {
 
 ```graphql
 type Column {
-    id: Id!
+    _id: Id!
     name: String!
     description: String
     project: Project!
@@ -114,7 +114,7 @@ type Column {
 
 ```json
 {
-  "id": "ObjectId",
+  "_id": "ObjectId",
   "username": "string",
   "email": "string"
 }
@@ -124,7 +124,7 @@ type Column {
 
 ```graphql
 type User {
-    id: Id!
+    _id: Id!
     username: String
     email: String
     projects: [Project]!
@@ -159,7 +159,7 @@ type Mutation {
         columns: [String]
         tasks: [String]
     ): Project
-    deleteProject(id: String!): Project
+    deleteProject(_id: String!): Project
     addTask(
         title: String!
         description: String
@@ -173,7 +173,7 @@ type Mutation {
         status: String
         assignee: String
     ): Task
-    deleteTask(id: String!): Task
+    deleteTask(_id: String!): Task
     addColumn(
         name: String!
         description: String
@@ -183,6 +183,6 @@ type Mutation {
         description: String
         tasks: [String]
     ): Column
-    deleteColumn(id: String!): Column
+    deleteColumn(_id: String!): Column
 }
 ```
