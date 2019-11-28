@@ -1,8 +1,11 @@
-const { User } = require('../../database');
+const { User, Projects } = require('../../database');
 
 const projects = async () => {};
 
-const project = async () => {};
+const project = async () => {
+    const allProjects = await Projects.getAllProjects();
+    return allProjects[0];
+};
 
 const tasks = async () => {};
 

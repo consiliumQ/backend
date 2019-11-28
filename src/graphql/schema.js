@@ -1,25 +1,31 @@
 const { gql } = require('apollo-server');
 
 const typeDefs = gql`
+    enum Backlog {
+        project
+        release
+        sprint
+    }
+
     type User {
-        id: ID!
-        username: String!
-        email: String!
-        projects: [Project]
+        _id: ID!
+        username: String
+        email: String
+        projects: [Project]!
     }
 
     type Project {
-        id: ID!
+        _id: ID!
         name: String!
         description: String
-        owner: User!
-        constributors: User
-        tasks: [Task]
-        columns: [Column]
+        owner: User
+        contributers: [User]
+        tasks: [Task]!
+        columns: [Column]! # order matters
     }
 
     type Column {
-        id: ID!
+        _id: ID!
         name: String!
         description: String
         project: Project!
@@ -27,38 +33,70 @@ const typeDefs = gql`
     }
 
     type Task {
-        id: ID!
+        _id: ID!
         title: String!
         description: String
-        # backlog: {project, release, sprint}
-        backlog: String!
+        backlog: Backlog! # when created the task, if not specified, default to "project"
         priority: Int
         storyPoints: Int
-        column: Column!
+        project: Project!
+        column: Column! # when first created, put the task in first columns of the project
         assignee: User
     }
 
     type Query {
-        projects(ownerId: String!): [Project]
-        project(projectId: String!): Project
-        tasks(projectId: String!, columnId: String, taskId: String): [Task]
-        task(taskId: String!): Task
-        user(userId: String!): User
+        projects(ownerId: ID!): [Project]
+        project(projectId: ID): Project
+        tasks(projectId: ID!, columnId: ID, taskId: ID): [Task]
+        task(taskId: ID!): Task
+        user(userId: ID!): User
+    }
+
+    input UpdateProject {
+        name: String
+        description: String
+        constributorIds: [ID!]
+        taskIds: [ID!]
+        columnIds: [ID!]
+    }
+
+    input UpdateColumn {
+        name: String
+        description: String
+        projectId: ID
+        taskIds: [ID!]
+    }
+
+    input UpdateTask {
+        title: String
+        description: String
+        backlog: Backlog
+        priority: Int
+        storyPoints: Int
+        projectId: ID
+        columnId: ID
+        assigneeId: ID
+    }
+
+    input UpdateUser {
+        username: String
+        email: String
+        projects: [ID!]
     }
 
     type Mutation {
         # Project
-        addProject(name: String!, owner: String!, description: String): Project
-        updateProject(name: String, description: String, constributors: [String], columns: [String], tasks: [String]): Project
-        deleteProject(id: String!): Project
+        addProject(name: String!, ownerId: ID!, description: String): Project
+        updateProject(projectId: ID!, updateProjectObj: UpdateProject): Project
+        deleteProject(projectId: ID!): Project
         # Task
         addTask(title: String!, description: String): Task
-        updateTask(title: String, description: String, backlog: String, priority: Int, storyPoints: Int, status: String, assignee: String): Task
-        deleteTask(id: String!): Task
+        updateTask(projectId: ID!, updateTaskObj: UpdateTask): Task
+        deleteTask(taskId: ID!): Task
         # Column
         addColumn(name: String!, description: String): Column
-        updateColumn(name: String, description: String, tasks: [String]): Column
-        deleteColumn(id: String!): Column
+        updateColumn(columnId: ID!, updateColumnObj: UpdateColumn): Column
+        deleteColumn(taskId: ID!): Column
     }
 `;
 
