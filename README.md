@@ -92,7 +92,7 @@ type Task {
   "name": "string",
   "description": "string",
   "projectId": "projectId",
-  "tasks": "linked list of taskIds"
+  "taskIds": "taskId[]"
 }
 ```
 
