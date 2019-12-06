@@ -26,16 +26,43 @@ module.exports = {
     createOneProject: async projectInfo => {
         const { _id, name, ownerId } = projectInfo;
         if (!name || !ownerId) {
-            throw 'Name and owner fields are required but missing!';
+            throw '[database/Projects.js] Name and owner fields are required but missing!';
         }
-
         const project = await getProjectCollectionHanlde();
-
         const newProject = createProjectObject({ ...projectInfo });
-
         const result = await project.insertOne(_id ? { _id, ...newProject } : newProject);
         return await module.exports.getProjectById(result.insertedId);
     },
 
-    // updateOneProject: async (projectId, updateInfo) => {},
+    updateOneProject: async (projectId, updateInfo) => {
+        if (!projectId) {
+            throw '[database/Projects.js] projectId is required';
+        }
+        const project = await getProjectCollectionHanlde();
+        const foundProject = await project.findOne({ _id: ObjectId(projectId) });
+        const { value: updatedProject } = await project.findOneAndReplace(
+            { _id: ObjectId(projectId) },
+            { ...foundProject, ...updateInfo },
+            { returnOriginal: false },
+        );
+        if (!updatedProject) {
+            throw '[database/Projects.js] Updating Project failed';
+        }
+        return updatedProject;
+    },
+
+    deleteOneProject: async projectId => {
+        if (!projectId) {
+            throw '[database/Projects.js] projectId is required';
+        }
+        const project = await getProjectCollectionHanlde();
+        const foundProject = await project.findOne({ _id: ObjectId(projectId) });
+        const deletion = await project.removeOne({ _id: ObjectId(projectId) });
+
+        if (deletion.deletedCount === 0) {
+            throw '[database/Projects.js] Deleting Project failed';
+        }
+
+        return foundProject;
+    },
 };
