@@ -17,7 +17,7 @@ const createTaskObject = ({
 module.exports = {
     getTaskById: async taskId => {
         if (!taskId) {
-            throw 'No taskId is provided';
+            throw '[database/Tasks.js] No taskId is provided';
         }
 
         const tasks = await getTasksCollectionHandle();
@@ -27,7 +27,7 @@ module.exports = {
     createOneTask: async taskInfo => {
         const { _id, title } = taskInfo;
         if (!title) {
-            throw 'To create a task a title must be provided!';
+            throw '[database/Tasks.js] To create a task a title must be provided!';
         }
 
         const tasks = await getTasksCollectionHandle();
@@ -40,7 +40,7 @@ module.exports = {
 
     updateOneTask: async (taskId, updateInfo = {}) => {
         if (!taskId) {
-            throw 'task id is missing';
+            throw '[database/Tasks.js] taskId is required';
         }
 
         // it's probably good to check the keys in updateInfo against the schema from createTaskObject
@@ -53,9 +53,24 @@ module.exports = {
         );
 
         if (!udpatedTask) {
-            throw 'Update fail!';
+            throw '[database/Tasks.js] Updating Task failed';
         }
 
         return udpatedTask;
+    },
+
+    deleteOneTask: async taskId => {
+        if (!taskId) {
+            throw '[database/Tasks.js] taskId is required';
+        }
+        const tasks = await getTasksCollectionHandle();
+        const foundTask = await tasks.findOne({ _id: ObjectId(taskId) });
+        const deletion = await tasks.removeOne({ _id: ObjectId(taskId) });
+
+        if (deletion.deletedCount === 0) {
+            throw '[database/Tasks.js] Deleting Task failed';
+        }
+
+        return foundTask;
     },
 };

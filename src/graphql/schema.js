@@ -94,9 +94,9 @@ const typeDefs = gql`
         updateTask(projectId: ID!, updateTaskObj: UpdateTask): Task
         deleteTask(taskId: ID!): Task
         # Column
-        addColumn(name: String!, description: String): Column
+        addColumn(name: String!, projectId: ID!, description: String): Column
         updateColumn(columnId: ID!, updateColumnObj: UpdateColumn): Column
-        deleteColumn(taskId: ID!): Column
+        deleteColumn(columnId: ID!): Column
     }
 `;
 
