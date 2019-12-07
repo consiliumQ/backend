@@ -1,4 +1,4 @@
-const { Projects, Tasks } = require('../../database');
+const { Projects, Tasks, Columns } = require('../../database');
 
 const addProject = async (_, args) => {
     if (!args.name || !args.ownerId) {
@@ -10,7 +10,7 @@ const addProject = async (_, args) => {
     }
 
     if (args.ownerId.constructor !== String) {
-        throw `[graphql/resolvers/Mutation.js] Invalid input type for namefor new project`;
+        throw `[graphql/resolvers/Mutation.js] Invalid input type for name for new project`;
     }
 
     if (args.description) {
@@ -18,10 +18,7 @@ const addProject = async (_, args) => {
             throw `[graphql/resolvers/Mutation.js] Invalid input for project description`;
         }
     }
-
-    const projectInfo = { name: args.name, ownerId: args.ownerId };
-    const addedProject = await Projects.createOneProject(projectInfo);
-
+    const addedProject = await Projects.createOneProject(args);
     return addedProject;
 };
 const updateProject = async (_, args) => {
@@ -29,7 +26,11 @@ const updateProject = async (_, args) => {
         throw `[graphql/resolvers/Mutation.js] projectId is required in order to update a project`;
     }
 
-    //type check for args.updateProjectObj
+    if (args.projectId.constructor !== String) {
+        throw `[graphql/resolvers/Mutation.js] Invalid input for projectId`;
+    }
+
+    // type check for updateProjectObj
 
     const updatedProject = await Projects.updateOneProject(args.projectId, args.updateProjectObj);
     return updatedProject;
@@ -44,6 +45,7 @@ const deleteProject = async (_, args) => {
     }
 
     const deletedProject = await Projects.deleteOneProject(args.projectId);
+
     return deletedProject;
 };
 const addTask = async (_, args) => {
@@ -61,19 +63,19 @@ const addTask = async (_, args) => {
         }
     }
 
-    const taskInfo = { title: args.title };
-    const addedTask = await Tasks.createOneTask(taskInfo);
-
+    const addedTask = await Tasks.createOneTask(args);
     return addedTask;
 };
 const updateTask = async (_, args) => {
-    if (!args.projectId) {
-        throw `[graphql/resolvers/Mutation.js] projectId is required in order to update a task`;
+    if (!args.taskId) {
+        throw `[graphql/resolvers/Mutation.js] taskId is required in order to update a task`;
     }
 
-    // type check for args.updateTaskObj
+    if (args.taskId.constructor !== String) {
+        throw `[graphql/resolvers/Mutation.js] Invalid input type for taskId`;
+    }
 
-    const updatedTask = await Tasks.updateOneTask(args.projectId, args.updatedTaskObj);
+    const updatedTask = await Tasks.updateOneTask(args.taskId, args.updateTaskObj);
     return updatedTask;
 };
 const deleteTask = async (_, args) => {
@@ -106,9 +108,30 @@ const addColumn = async (_, args) => {
             throw `[graphql/resolvers/Mutation.js] Invalid input type for column description`;
         }
     }
+
+    const addedColumn = await Columns.createOneColumn(args);
+    return addedColumn;
 };
-const updateColumn = async () => {};
-const deleteColumn = async () => {};
+const updateColumn = async (_, args) => {
+    if (!args.columnId) {
+        throw `[graphql/resolvers/Mutation.js] columnId is required in order to update a column`;
+    }
+
+    const updatedColumn = await Columns.updateOneColumn(args.columnId, args.updateColumnObj);
+    return updatedColumn;
+};
+const deleteColumn = async (_, args) => {
+    if (!args.columnId) {
+        throw `[graphql/resolvers/Mutation.js] columnId is required in order to delete a column`;
+    }
+
+    if (args.columnId.constructor !== String) {
+        throw `[graphql/resolvers/Mutation.js] Invalid input type for columnId`;
+    }
+
+    const deletedColumn = await Columns.deleteOneColumn(args.columnId);
+    return deletedColumn;
+};
 
 module.exports = {
     addProject,

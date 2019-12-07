@@ -2,6 +2,8 @@ const { ObjectId } = require('mongodb');
 const { getCollectionHandle } = require('./config');
 
 const getProjectCollectionHanlde = getCollectionHandle('projects');
+const getColumnCollectionHandle = getCollectionHandle('columns');
+const getTasksCollectionHandle = getCollectionHandle('tasks');
 
 const createProjectObject = ({ name = 'unknown', ownerId = null, description = 'unknown', contributorIds = [], taskIds = [], columnIds = [] }) => ({
     name,
@@ -56,7 +58,18 @@ module.exports = {
             throw '[database/Projects.js] projectId is required';
         }
         const project = await getProjectCollectionHanlde();
+        const columns = await getColumnCollectionHandle();
+        const tasks = await getTasksCollectionHandle();
         const foundProject = await project.findOne({ _id: ObjectId(projectId) });
+
+        await foundProject.columnIds.forEach(async columnId => {
+            await columns.removeOne({ _id: ObjectId(columnId) });
+        });
+
+        await foundProject.taskIds.forEach(async taskId => {
+            await tasks.removeOne({ _id: ObjectId(taskId) });
+        });
+
         const deletion = await project.removeOne({ _id: ObjectId(projectId) });
 
         if (deletion.deletedCount === 0) {
