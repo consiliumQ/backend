@@ -1,14 +1,13 @@
 const { ApolloServer } = require('apollo-server');
-
 const typeDefs = require('./schema');
 const resolvers = require('./resolvers');
+const {getUser, getUserIdFromToken} = require("../authentication/auth");
 
-const context = ({ req }) => {
+const context = async ({ req }) => {
+    const [, token] = (req.headers.authorization || '').split("Bearer ");
+
     return {
-        user: {
-            userId: '5ded787d0ea584c3dd89ddc0',
-            isLoggedIn: true,
-        },
+        user: await getUser(await getUserIdFromToken(token)),
     };
 };
 

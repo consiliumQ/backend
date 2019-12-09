@@ -43,6 +43,10 @@ const typeDefs = gql`
         column: Column! # when first created, put the task in first columns of the project
         assignee: User
     }
+    
+    type Authentication {
+        token: String!
+    }
 
     type Query {
         projects(ownerId: ID!): [Project]
@@ -94,6 +98,8 @@ const typeDefs = gql`
         addColumn(name: String!, projectId: ID!, description: String): Column
         updateColumn(columnId: ID!, updateColumnObj: UpdateColumn): Column
         deleteColumn(columnId: ID!): Column
+        # Authentication
+        login(username: String!, password: String!): Authentication
     }
 `;
 
