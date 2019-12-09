@@ -20,6 +20,11 @@ module.exports = {
         return await project.findOne({ _id: ObjectId(projectId) });
     },
 
+    getProjectsByUserId: async userId => {
+        const project = await getProjectCollectionHanlde();
+        return await project.find({ ownerId: ObjectId(userId) }).toArray();
+    },
+
     getAllProjects: async () => {
         const project = await getProjectCollectionHanlde();
         return await project.find({}).toArray();

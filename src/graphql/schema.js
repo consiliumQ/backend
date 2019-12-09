@@ -47,7 +47,7 @@ const typeDefs = gql`
     type Query {
         projects(ownerId: ID!): [Project]
         project(projectId: ID): Project
-        tasks(projectId: ID!, columnId: ID, taskId: ID): [Task]
+        # tasks(projectId: ID!, columnId: ID, taskId: ID): [Task]
         task(taskId: ID!): Task
         user(userId: ID!): User
     }
@@ -63,7 +63,6 @@ const typeDefs = gql`
     input UpdateColumn {
         name: String
         description: String
-        projectId: ID
         taskIds: [ID!]
     }
 
@@ -73,8 +72,6 @@ const typeDefs = gql`
         backlog: Backlog
         priority: Int
         storyPoints: Int
-        projectId: ID
-        columnId: ID
         assigneeId: ID
     }
 

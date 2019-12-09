@@ -9,10 +9,8 @@ const createTaskObject = ({
     backlog = null,
     priority = null,
     storyPoints = null,
-    projectId = null,
-    columnId = null,
     assigneeId = null,
-}) => ({ title, description, backlog, priority, storyPoints, projectId, columnId, assigneeId });
+}) => ({ title, description, backlog, priority, storyPoints, assigneeId });
 
 module.exports = {
     getTaskById: async taskId => {

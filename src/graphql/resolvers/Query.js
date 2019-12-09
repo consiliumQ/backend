@@ -1,22 +1,21 @@
 const { User, Projects, Tasks } = require('../../database');
 
 // arg -> ownerId?
-const projects = async () => {
-    // probably wait till the authentication done to implement this method, or use a dummy/seeded data to pretend a logged in status.
+const projects = async (par, args, ctx) => {
+    return await Projects.getProjectsByUserId(ctx.user.userId);
 };
 
-const project = async (_, args) => {
+const project = async (_, args, ctx) => {
     // NOTE: the code commented out is the proper code for this resolver
     //       the code uncommented is the work around to coorperate frontend dev
 
-    // const foundProject = await Projects.getProjectById(args.projectId);
-    // return foundProject;
-    const allProjects = await Projects.getAllProjects();
-    return allProjects[0];
+    const projectsByUserId = await Projects.getProjectsByUserId(ctx.user.userId);
+    return projectsByUserId[0];
 };
 
 // args: projectId, columnId, taskId
-const tasks = async (_, args) => {};
+// I don't think we really need this
+// const tasks = async (_, args) => {};
 
 const task = async (_, args) => {
     const foundTask = await Tasks.getTaskById(args.taskId);
@@ -31,7 +30,7 @@ const user = async (_, args) => {
 module.exports = {
     projects,
     project,
-    tasks,
+    // tasks,
     task,
     user,
 };

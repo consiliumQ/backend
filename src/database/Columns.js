@@ -4,10 +4,9 @@ const { getCollectionHandle } = require('./config');
 const getColumnCollectionHandle = getCollectionHandle('columns');
 const getTasksCollectionHandle = getCollectionHandle('tasks');
 
-const createColumnObject = ({ name = 'unknown', description = 'unknown', projectId = null, taskIds = [] }) => ({
+const createColumnObject = ({ name = 'unknown', description = 'unknown', taskIds = [] }) => ({
     name,
     description,
-    projectId,
     taskIds,
 });
 
@@ -18,13 +17,11 @@ module.exports = {
     },
 
     createOneColumn: async columnInfo => {
-        const { _id, name, projectId } = columnInfo;
+        const { _id, name } = columnInfo;
         if (!name) {
             throw '[database/Columns.js] column name is required';
         }
-        if (!projectId) {
-            throw '[database/Columns.js] projectId is required';
-        }
+
         const columns = await getColumnCollectionHandle();
         const newColumn = createColumnObject({ ...columnInfo });
         const result = await columns.insertOne(_id ? { _id, ...newColumn } : newColumn);
@@ -39,7 +36,7 @@ module.exports = {
         const foundColumn = await columns.findOne({ _id: ObjectId(columnId) });
         const { value: updatedColumn } = await columns.findOneAndReplace(
             { _id: ObjectId(columnId) },
-            { ...foundColumn, ...updateInfo },
+            { ...foundColumn, ...updateInfo }, // we may want to wrap this with createColumnObject to filter unexpected fields
             { returnOriginal: false },
         );
         if (!updatedColumn) {
