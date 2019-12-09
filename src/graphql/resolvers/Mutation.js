@@ -1,9 +1,9 @@
 const { AuthenticationError } = require('apollo-server');
-const {getToken} = require("../../authentication/auth");
+const { getToken, createUser } = require('../../authentication/auth');
 const { Projects, Tasks, Columns } = require('../../database');
 
 const addProject = async (_, args, context) => {
-    if(!context.user) throw new AuthenticationError("You must be logged in to perform this action");
+    if (!context.user) throw new AuthenticationError('You must be logged in to perform this action');
 
     if (!args.name || !args.ownerId) {
         throw `[graphql/resolvers/Mutation.js] name and ownerId are required in order to add new project`;
@@ -26,7 +26,7 @@ const addProject = async (_, args, context) => {
     return addedProject;
 };
 const updateProject = async (_, args, context) => {
-    if(!context.user) throw new AuthenticationError("You must be logged in to perform this action");
+    if (!context.user) throw new AuthenticationError('You must be logged in to perform this action');
 
     if (!args.projectId) {
         throw `[graphql/resolvers/Mutation.js] projectId is required in order to update a project`;
@@ -42,7 +42,7 @@ const updateProject = async (_, args, context) => {
     return updatedProject;
 };
 const deleteProject = async (_, args, context) => {
-    if(!context.user) throw new AuthenticationError("You must be logged in to perform this action");
+    if (!context.user) throw new AuthenticationError('You must be logged in to perform this action');
 
     if (!args.projectId) {
         throw `[graphql/resolvers/Mutation.js] projectId is required in order to delete a project`;
@@ -57,7 +57,7 @@ const deleteProject = async (_, args, context) => {
     return deletedProject;
 };
 const addTask = async (_, args, context) => {
-    if(!context.user) throw new AuthenticationError("You must be logged in to perform this action");
+    if (!context.user) throw new AuthenticationError('You must be logged in to perform this action');
 
     if (!args.title) {
         throw `[graphql/resolvers/Mutation.js] title is required in order to add new task`;
@@ -77,7 +77,7 @@ const addTask = async (_, args, context) => {
     return addedTask;
 };
 const updateTask = async (_, args, context) => {
-    if(!context.user) throw new AuthenticationError("You must be logged in to perform this action");
+    if (!context.user) throw new AuthenticationError('You must be logged in to perform this action');
 
     if (!args.taskId) {
         throw `[graphql/resolvers/Mutation.js] taskId is required in order to update a task`;
@@ -91,7 +91,7 @@ const updateTask = async (_, args, context) => {
     return updatedTask;
 };
 const deleteTask = async (_, args, context) => {
-    if(!context.user) throw new AuthenticationError("You must be logged in to perform this action");
+    if (!context.user) throw new AuthenticationError('You must be logged in to perform this action');
 
     if (!args.taskId) {
         throw `[graphql/resolvers/Mutation.js] taskId is required in order to delete a task`;
@@ -105,7 +105,7 @@ const deleteTask = async (_, args, context) => {
     return deletedTask;
 };
 const addColumn = async (_, args, context) => {
-    if(!context.user) throw new AuthenticationError("You must be logged in to perform this action");
+    if (!context.user) throw new AuthenticationError('You must be logged in to perform this action');
 
     if (!args.name || !args.projectId) {
         throw `[graphql/resolvers/Mutation.js] name is required in order to add new Column`;
@@ -129,7 +129,7 @@ const addColumn = async (_, args, context) => {
     return addedColumn;
 };
 const updateColumn = async (_, args, context) => {
-    if(!context.user) throw new AuthenticationError("You must be logged in to perform this action");
+    if (!context.user) throw new AuthenticationError('You must be logged in to perform this action');
 
     if (!args.columnId) {
         throw `[graphql/resolvers/Mutation.js] columnId is required in order to update a column`;
@@ -139,7 +139,7 @@ const updateColumn = async (_, args, context) => {
     return updatedColumn;
 };
 const deleteColumn = async (_, args, context) => {
-    if(!context.user) throw new AuthenticationError("You must be logged in to perform this action");
+    if (!context.user) throw new AuthenticationError('You must be logged in to perform this action');
 
     if (!args.columnId) {
         throw `[graphql/resolvers/Mutation.js] columnId is required in order to delete a column`;
@@ -153,12 +153,18 @@ const deleteColumn = async (_, args, context) => {
     return deletedColumn;
 };
 
-const loginUser = async (_, args) => {
+const login = async (_, args) => {
     if (!args.username || !args.password) {
         throw `[graphql/resolvers/Mutation.js] username and password are required in order to login`;
     }
 
-    return await getToken(args.username, args.password);
+    return { token: await getToken(args.username, args.password) };
+};
+
+const signup = async (_, args) => {
+    const { username, email, password } = args;
+    const newUser = await createUser(username, email, password);
+    return { token: newUser };
 };
 
 module.exports = {
@@ -171,5 +177,6 @@ module.exports = {
     addColumn,
     updateColumn,
     deleteColumn,
-    loginUser,
+    login,
+    signup,
 };

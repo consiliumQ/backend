@@ -19,8 +19,8 @@ async function getToken(username, password) {
     const response = await fetch(`${process.env.OKTA_ORG_URL}/oauth2/default/v1/token`, {
         method: 'POST',
         headers: {
-            'Authorization': `Basic ${basicAuth}`,
-            'Accept': 'application/json',
+            Authorization: `Basic ${basicAuth}`,
+            Accept: 'application/json',
             'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: new URLSearchParams({
@@ -31,15 +31,19 @@ async function getToken(username, password) {
         }).toString(),
     });
 
-    const { error_description, access_token } = await response.json();
+    const { error_description: errorDescription, access_token: accessToken } = await response.json();
 
-    if (error_description) throw new AuthenticationError(error_description);
+    if (errorDescription) {
+        throw new AuthenticationError(errorDescription);
+    }
 
-    return access_token;
+    return accessToken;
 }
 
 async function getUser(userId) {
-    if (!userId) return;
+    if (!userId) {
+        return null;
+    }
 
     try {
         const user = await client.getUser(userId);
@@ -50,7 +54,9 @@ async function getUser(userId) {
 }
 
 async function getUserIdFromToken(token) {
-    if (!token) return;
+    if (!token) {
+        return null;
+    }
 
     try {
         const jwt = await verifier.verifyAccessToken(token);
@@ -60,4 +66,24 @@ async function getUserIdFromToken(token) {
     }
 }
 
-module.exports = { getToken, getUserIdFromToken, getUser };
+async function createUser(username, email, password) {
+    const userInfo = {
+        profile: {
+            firstName: username,
+            lastName: username,
+            email,
+            login: email,
+        },
+        credentials: {
+            password: {
+                value: password,
+            },
+        },
+    };
+
+    const newUser = await client.createUser(userInfo);
+    console.log(newUser);
+    return Promise.resolve();
+}
+
+module.exports = { getToken, getUserIdFromToken, getUser, createUser };

@@ -43,7 +43,7 @@ const typeDefs = gql`
         column: Column! # when first created, put the task in first columns of the project
         assignee: User
     }
-    
+
     type Authentication {
         token: String!
     }
@@ -100,6 +100,7 @@ const typeDefs = gql`
         deleteColumn(columnId: ID!): Column
         # Authentication
         login(username: String!, password: String!): Authentication
+        signup(username: String!, email: String!, password: String!): Authentication
     }
 `;
 
