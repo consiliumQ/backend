@@ -3,6 +3,7 @@ const Mutation = require('./Mutation');
 const Project = require('./Project');
 const Column = require('./Column');
 const Task = require('./Task');
+const User = require('./User');
 
 module.exports = {
     Query,
@@ -10,4 +11,5 @@ module.exports = {
     Project,
     Column,
     Task,
+    User,
 };
