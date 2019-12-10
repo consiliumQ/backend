@@ -20,6 +20,11 @@ module.exports = {
         return await project.findOne({ _id: ObjectId(projectId) });
     },
 
+    getProjectByColumnId: async columnId => {
+        const project = await getProjectCollectionHanlde();
+        return await project.findOne({ columnIds: { $elemMatch: { $eq: ObjectId(columnId) } } });
+    },
+
     getProjectsByUserId: async userId => {
         const project = await getProjectCollectionHanlde();
         return await project.find({ ownerId: ObjectId(userId) }).toArray();
