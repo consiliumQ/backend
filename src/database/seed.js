@@ -36,12 +36,13 @@ module.exports = async () => {
                 name: `TestProject_${projectId.toString().slice(-4)}`,
                 description: 'This is a project created by default (for development majorly.',
                 ownerId: userId,
-                columnIds,
+                columnIds: [],
                 taskIds,
             };
 
             const columnsInfo = columnIds.map((cid, idx) => ({
                 _id: cid,
+                projectId,
                 name: `Dummy Col No.${cid.toString().slice(-4)}_${idx}`,
                 description: `This is dummy col No.${cid.toString().slice(-4)}_${idx}`,
                 taskIds: taskIds.filter((_, tidx) => tidx % columnIds.length === idx),
@@ -65,5 +66,5 @@ module.exports = async () => {
         }
     }
 
-    await db.serverConfig.close();
+    // await db.serverConfig.close();
 };

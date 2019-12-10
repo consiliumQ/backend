@@ -1,6 +1,7 @@
 const { ObjectId } = require('mongodb');
 const { getCollectionHandle } = require('./config');
 
+const getProjectCollectionHanlde = getCollectionHandle('projects');
 const getColumnCollectionHandle = getCollectionHandle('columns');
 const getTasksCollectionHandle = getCollectionHandle('tasks');
 
@@ -17,14 +18,23 @@ module.exports = {
     },
 
     createOneColumn: async columnInfo => {
-        const { _id, name } = columnInfo;
+        const { _id, name, projectId } = columnInfo;
         if (!name) {
             throw '[database/Columns.js] column name is required';
         }
 
+        if (!projectId) {
+            throw new Error('A project Id is mandatory for adding a column!');
+        }
+
         const columns = await getColumnCollectionHandle();
+        const projects = await getProjectCollectionHanlde();
+
         const newColumn = createColumnObject({ ...columnInfo });
         const result = await columns.insertOne(_id ? { _id, ...newColumn } : newColumn);
+
+        await projects.findOneAndUpdate({ _id: ObjectId(projectId) }, { $push: { columnIds: result.insertedId } });
+
         return await module.exports.getColumnById(result.insertedId);
     },
 

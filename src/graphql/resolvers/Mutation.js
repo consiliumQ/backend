@@ -110,6 +110,8 @@ const addColumn = async (_, args) => {
     }
 
     const addedColumn = await Columns.createOneColumn(args);
+    // const modifiedProject = await Projects.getProjectByColumnId(newColumnId);
+    // return modifiedProject;
     return addedColumn;
 };
 const updateColumn = async (_, args) => {
