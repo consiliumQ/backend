@@ -4,10 +4,9 @@ const resolvers = require('./resolvers');
 const { getUser, getUserIdFromToken } = require('../authentication/auth');
 
 const context = async ({ req }) => {
-    const [, token] = (req.headers.authorization || '').split('Bearer ');
+    const [, token] = (req.headers.authroization || '').split('Bearer ');
 
     const user = await getUser(await getUserIdFromToken(token));
-    console.log(user);
     return {
         user,
     };

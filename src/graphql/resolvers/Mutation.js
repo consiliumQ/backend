@@ -163,8 +163,13 @@ const login = async (_, args) => {
 
 const signup = async (_, args) => {
     const { username, email, password } = args;
-    const newUser = await createUser(username, email, password);
-    return { token: newUser };
+    try {
+        await createUser(username, email, password);
+    } catch (e) {
+        console.error(e);
+        return Promise.resolve(false);
+    }
+    return Promise.resolve(true);
 };
 
 module.exports = {

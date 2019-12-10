@@ -49,7 +49,7 @@ async function getUser(userId) {
         const user = await client.getUser(userId);
         return user.profile;
     } catch (error) {
-        // ignore
+        console.log('in get user \n', error);
     }
 }
 
@@ -62,7 +62,7 @@ async function getUserIdFromToken(token) {
         const jwt = await verifier.verifyAccessToken(token);
         return jwt.claims.sub;
     } catch (error) {
-        // ignore
+        console.log('in get user id from token \n', error);
     }
 }
 
@@ -81,9 +81,12 @@ async function createUser(username, email, password) {
         },
     };
 
-    const newUser = await client.createUser(userInfo);
-    console.log(newUser);
-    return Promise.resolve();
+    try {
+        await client.createUser(userInfo);
+    } catch (e) {
+        console.error(e);
+    }
+    return Promise.resolve(true);
 }
 
 module.exports = { getToken, getUserIdFromToken, getUser, createUser };

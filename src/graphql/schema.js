@@ -100,7 +100,7 @@ const typeDefs = gql`
         deleteColumn(columnId: ID!): Column
         # Authentication
         login(username: String!, password: String!): Authentication
-        signup(username: String!, email: String!, password: String!): Authentication
+        signup(username: String!, email: String!, password: String!): Boolean
     }
 `;
 
