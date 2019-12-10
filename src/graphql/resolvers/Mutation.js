@@ -115,12 +115,18 @@ const addColumn = async (_, args) => {
     return addedColumn;
 };
 const updateColumn = async (_, args) => {
-    if (!args.columnId) {
-        throw `[graphql/resolvers/Mutation.js] columnId is required in order to update a column`;
-    }
+    const { updateColumnArray } = args;
 
-    const updatedColumn = await Columns.updateOneColumn(args.columnId, args.updateColumnObj);
-    return updatedColumn;
+    const updatedColumns = updateColumnArray.map(async updateCol => {
+        const { columnId, ...updateColumnObj } = updateCol;
+        if (!columnId) {
+            throw `[graphql/resolvers/Mutation.js] columnId is required in order to update a column`;
+        }
+
+        return await Columns.updateOneColumn(columnId, updateColumnObj);
+    });
+
+    return updatedColumns;
 };
 const deleteColumn = async (_, args) => {
     if (!args.columnId) {

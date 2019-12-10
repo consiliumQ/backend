@@ -61,6 +61,7 @@ const typeDefs = gql`
     }
 
     input UpdateColumn {
+        columnId: ID!
         name: String
         description: String
         taskIds: [ID!]
@@ -92,7 +93,7 @@ const typeDefs = gql`
         deleteTask(taskId: ID!): Task
         # Column
         addColumn(name: String!, projectId: ID!, description: String): Column # Project # I thought return a Project type can auto update cache in the frontend, not really
-        updateColumn(columnId: ID!, updateColumnObj: UpdateColumn): Column
+        updateColumn(updateColumnArray: [UpdateColumn]): [Column]
         deleteColumn(columnId: ID!): Column
     }
 `;
