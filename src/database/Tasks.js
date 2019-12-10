@@ -1,6 +1,8 @@
 const { ObjectId } = require('mongodb');
 const { getCollectionHandle } = require('./config');
 
+const getProjectCollectionHandle = getCollectionHandle('projects');
+const getColumnCollectionHandle = getCollectionHandle('columns');
 const getTasksCollectionHandle = getCollectionHandle('tasks');
 
 const createTaskObject = ({
@@ -23,16 +25,33 @@ module.exports = {
     },
 
     createOneTask: async taskInfo => {
-        const { _id, title } = taskInfo;
+        const { _id, title, projectId, columnId } = taskInfo;
         if (!title) {
             throw '[database/Tasks.js] To create a task a title must be provided!';
         }
 
+        if (!projectId) {
+            throw new Error('The projectId is missing for creating an new task.');
+        }
+
+        const projects = await getProjectCollectionHandle();
+        const columns = await getColumnCollectionHandle();
         const tasks = await getTasksCollectionHandle();
 
         const newTask = createTaskObject({ ...taskInfo });
-
         const result = await tasks.insertOne(_id ? { _id, ...newTask } : newTask);
+
+        await projects.findOneAndUpdate({ _id: ObjectId(projectId) }, { $push: { taskIds: result.insertedId } });
+
+        if (columnId) {
+            if (await columns.findOne({ _id: ObjectId(columnId) })) {
+                await columns.findOneAndUpdate({ _id: ObjectId(columnId) }, { $push: { taskIds: result.insertedId } });
+            }
+        } else {
+            const { columnIds } = await projects.findOne({ _id: ObjectId(projectId) });
+            await columns.findOneAndUpdate({ _id: ObjectId(columnIds[0]) }, { $push: { taskIds: result.insertedId } });
+        }
+
         return await module.exports.getTaskById(result.insertedId);
     },
 

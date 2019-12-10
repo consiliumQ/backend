@@ -88,7 +88,7 @@ const typeDefs = gql`
         updateProject(projectId: ID!, updateProjectObj: UpdateProject): Project
         deleteProject(projectId: ID!): Project
         # Task
-        addTask(title: String!, description: String): Task
+        addTask(title: String!, description: String, projectId: ID!, columnId: ID): Task
         updateTask(taskId: ID!, updateTaskObj: UpdateTask): Task
         deleteTask(taskId: ID!): Task
         # Column

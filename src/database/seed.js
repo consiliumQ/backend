@@ -37,7 +37,7 @@ module.exports = async () => {
                 description: 'This is a project created by default (for development majorly.',
                 ownerId: userId,
                 columnIds: [],
-                taskIds,
+                taskIds: [],
             };
 
             const columnsInfo = columnIds.map((cid, idx) => ({
@@ -52,6 +52,8 @@ module.exports = async () => {
                 _id: tid,
                 title: `Dummy Task No.${idx}`,
                 description: `This is dummy task No.${idx}`,
+                projectId,
+                columnId: columnIds[columnsInfo.findIndex(c => c.taskIds.includes(tid))],
             }));
 
             await Projects.createOneProject(projectInfo);
