@@ -49,7 +49,7 @@ const typeDefs = gql`
         project(projectId: ID): Project
         # tasks(projectId: ID!, columnId: ID, taskId: ID): [Task]
         task(taskId: ID!): Task
-        user(userId: ID!): User
+        user: User
     }
 
     input UpdateProject {
