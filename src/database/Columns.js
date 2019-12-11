@@ -17,6 +17,11 @@ module.exports = {
         return await columns.findOne({ _id: ObjectId(columnId) });
     },
 
+    getColumnByTaskId: async taskId => {
+        const columns = await getColumnCollectionHandle();
+        return await columns.findOne({ taskIds: { $elemMatch: { $eq: ObjectId(taskId) } } });
+    },
+
     createOneColumn: async columnInfo => {
         const { _id, name, projectId } = columnInfo;
         if (!name) {
@@ -72,5 +77,16 @@ module.exports = {
         }
 
         return foundColumn;
+    },
+
+    deleteTaskInColumn: async taskId => {
+        if (!taskId) {
+            throw new Error('A taskId is required to delete task in the proejct!');
+        }
+
+        const columns = await getColumnCollectionHandle();
+        const { _id: columnId } = await module.exports.getColumnByTaskId(taskId);
+
+        await columns.findOneAndUpdate({ _id: ObjectId(columnId) }, { $pull: { taskIds: ObjectId(taskId) } });
     },
 };
