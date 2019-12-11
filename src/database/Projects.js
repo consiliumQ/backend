@@ -25,6 +25,11 @@ module.exports = {
         return await project.findOne({ columnIds: { $elemMatch: { $eq: ObjectId(columnId) } } });
     },
 
+    getProjectByTaskId: async taskId => {
+        const project = await getProjectCollectionHanlde();
+        return await project.findOne({ taskIds: { $elemMatch: { $eq: ObjectId(taskId) } } });
+    },
+
     getProjectsByUserId: async userId => {
         const project = await getProjectCollectionHanlde();
         return await project.find({ ownerId: ObjectId(userId) }).toArray();
@@ -87,5 +92,27 @@ module.exports = {
         }
 
         return foundProject;
+    },
+
+    deleteTaskInProject: async taskId => {
+        if (!taskId) {
+            throw new Error('A taskId is required to delete task in the proejct!');
+        }
+
+        const project = await getProjectCollectionHanlde();
+        const { _id: projectId } = await module.exports.getProjectByTaskId(taskId);
+
+        await project.findOneAndUpdate({ _id: ObjectId(projectId) }, { $pull: { taskIds: ObjectId(taskId) } });
+    },
+
+    deleteColumnInProject: async columnId => {
+        if (!columnId) {
+            throw new Error('A taskId is required to delete task in the proejct!');
+        }
+
+        const project = await getProjectCollectionHanlde();
+        const { _id: projectId } = await module.exports.getProjectByColumnId(columnId);
+
+        await project.findOneAndUpdate({ _id: ObjectId(projectId) }, { $pull: { columnIds: ObjectId(columnId) } });
     },
 };
