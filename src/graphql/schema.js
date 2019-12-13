@@ -53,7 +53,7 @@ const typeDefs = gql`
         project(projectId: ID): Project
         # tasks(projectId: ID!, columnId: ID, taskId: ID): [Task]
         task(taskId: ID!): Task
-        user(userId: ID!): User
+        user: User
     }
 
     input UpdateProject {
@@ -65,6 +65,7 @@ const typeDefs = gql`
     }
 
     input UpdateColumn {
+        columnId: ID!
         name: String
         description: String
         taskIds: [ID!]
@@ -91,12 +92,12 @@ const typeDefs = gql`
         updateProject(projectId: ID!, updateProjectObj: UpdateProject): Project
         deleteProject(projectId: ID!): Project
         # Task
-        addTask(title: String!, description: String): Task
+        addTask(title: String!, description: String, projectId: ID!, columnId: ID): Task
         updateTask(taskId: ID!, updateTaskObj: UpdateTask): Task
         deleteTask(taskId: ID!): Task
         # Column
-        addColumn(name: String!, projectId: ID!, description: String): Column
-        updateColumn(columnId: ID!, updateColumnObj: UpdateColumn): Column
+        addColumn(name: String!, projectId: ID!, description: String): Column # Project # I thought return a Project type can auto update cache in the frontend, not really
+        updateColumn(updateColumnArray: [UpdateColumn]): [Column]
         deleteColumn(columnId: ID!): Column
         # Authentication
         # login(username: String!, password: String!): Authentication

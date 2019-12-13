@@ -36,7 +36,7 @@ module.exports = {
                 const columnIds = getColumnIds();
                 const taskIds = getTaskIds();
 
-                const projectInfo = {
+                /*const projectInfo = {
                     _id: projectId,
                     name: `TestProject_${projectId.toString().slice(-4)}`,
                     description: 'This is a project created by default (for development majorly.',
@@ -50,13 +50,38 @@ module.exports = {
                     name: `Dummy Col No.${cid.toString().slice(-4)}_${idx}`,
                     description: `This is dummy col No.${cid.toString().slice(-4)}_${idx}`,
                     taskIds: taskIds.filter((_, tidx) => tidx % columnIds.length === idx),
-                }));
+                }));*/
+              
+            const projectInfo = {
+                _id: projectId,
+                name: `TestProject_${projectId.toString().slice(-4)}`,
+                description: 'This is a project created by default (for development majorly.',
+                ownerId: userId,
+                columnIds: [],
+                taskIds: [],
+            };
 
-                const tasksInfo = taskIds.map((tid, idx) => ({
+            const columnsInfo = columnIds.map((cid, idx) => ({
+                _id: cid,
+                projectId,
+                name: `Dummy Col No.${cid.toString().slice(-4)}_${idx}`,
+                description: `This is dummy col No.${cid.toString().slice(-4)}_${idx}`,
+                taskIds: taskIds.filter((_, tidx) => tidx % columnIds.length === idx),
+            }));
+
+            const tasksInfo = taskIds.map((tid, idx) => ({
+                _id: tid,
+                title: `Dummy Task No.${idx}`,
+                description: `This is dummy task No.${idx}`,
+                projectId,
+                columnId: columnIds[columnsInfo.findIndex(c => c.taskIds.includes(tid))],
+            }));
+
+               /* const tasksInfo = taskIds.map((tid, idx) => ({
                     _id: tid,
                     title: `Dummy Task No.${idx}`,
                     description: `This is dummy task No.${idx}`,
-                }));
+                }));*/
 
                 await Projects.createOneProject(projectInfo);
 
@@ -70,6 +95,5 @@ module.exports = {
             }
         }
 
-        await db.serverConfig.close();
-    },
+    // await db.serverConfig.close();
 };

@@ -1,4 +1,4 @@
-const { User, Projects, Tasks } = require('../../database');
+const { Users, Projects, Tasks } = require('../../database');
 
 // arg -> ownerId?
 const projects = async (par, args, ctx) => {
@@ -6,11 +6,20 @@ const projects = async (par, args, ctx) => {
 };
 
 const project = async (_, args, ctx) => {
-    // NOTE: the code commented out is the proper code for this resolver
-    //       the code uncommented is the work around to coorperate frontend dev
+    const { projectId } = args;
 
-    const projectsByUserId = await Projects.getProjectsByUserId(ctx.user.userId);
-    return projectsByUserId[0];
+    let targetProject;
+    if (ctx.user) {
+        if (projectId) {
+            targetProject = await Projects.getProjectById(projectId);
+        } else {
+            [targetProject] = await Projects.getProjectsByUserId(ctx.user.userId);
+        }
+    } else {
+        throw new Error('Usre not logged in!');
+    }
+
+    return targetProject;
 };
 
 // args: projectId, columnId, taskId
@@ -22,8 +31,8 @@ const task = async (_, args) => {
     return foundTask;
 };
 
-const user = async (_, args) => {
-    const foundUser = await User.getUserById(args.userId);
+const user = async (_, args, ctx) => {
+    const foundUser = await Users.getUserById(ctx.user.userId);
     return foundUser;
 };
 
