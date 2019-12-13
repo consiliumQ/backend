@@ -11,6 +11,11 @@ module.exports = {
         return await users.find({}).toArray();
     },
 
+    getUserByEmail: async email => {
+        const users = await getUserCollectionHandle();
+        return await users.findOne({ email });
+    },
+
     getUserById: async id => {
         const users = await getUserCollectionHandle();
         return await users.findOne({ _id: ObjectId(id) });

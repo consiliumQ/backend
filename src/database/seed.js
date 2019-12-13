@@ -10,60 +10,66 @@ const getColumnIds = (numOfCol = 3) => Array.from(Array(numOfCol).keys()).map(()
 const getTaskIds = (numOfTsk = 8) => Array.from(Array(numOfTsk).keys()).map(() => ObjectId());
 const getUserIds = (numOfUsr = 3) => Array.from(Array(numOfUsr).keys()).map(() => ObjectId());
 
-module.exports = async () => {
-    const db = await mongoConnect();
-    db.dropDatabase();
+module.exports = {
+    dummyUser: async () => {
+        return await Users.getUserById(process.env.DUMMY_USER_ID);
+    },
 
-    const ownerId = ObjectId('5ded787d0ea584c3dd89ddc0'); // manually generated dummy userId
-    const userIds = [ownerId, ...getUserIds(4)];
+    seed: async () => {
+        const db = await mongoConnect();
+        db.dropDatabase();
 
-    for (const userId of userIds) {
-        const userInfo = {
-            _id: userId,
-            username: `TestUser_${userId.toString().slice(-4)}`,
-            email: `test.user${userId.toString().slice(-4)}@consiliumq.com`,
-        };
+        const ownerId = ObjectId(process.env.DUMMY_USER_ID); // manually generated dummy userId
+        const userIds = [ownerId, ...getUserIds(4)];
 
-        await Users.createOneUser(userInfo);
-
-        const projectIds = getProjectIds();
-        for (const projectId of projectIds) {
-            const columnIds = getColumnIds();
-            const taskIds = getTaskIds();
-
-            const projectInfo = {
-                _id: projectId,
-                name: `TestProject_${projectId.toString().slice(-4)}`,
-                description: 'This is a project created by default (for development majorly.',
-                ownerId: userId,
-                columnIds,
-                taskIds,
+        for (const userId of userIds) {
+            const userInfo = {
+                _id: userId,
+                username: `TestUser_${userId.toString().slice(-4)}`,
+                email: `test.user${userId.toString().slice(-4)}@consiliumq.com`,
             };
 
-            const columnsInfo = columnIds.map((cid, idx) => ({
-                _id: cid,
-                name: `Dummy Col No.${cid.toString().slice(-4)}_${idx}`,
-                description: `This is dummy col No.${cid.toString().slice(-4)}_${idx}`,
-                taskIds: taskIds.filter((_, tidx) => tidx % columnIds.length === idx),
-            }));
+            await Users.createOneUser(userInfo);
 
-            const tasksInfo = taskIds.map((tid, idx) => ({
-                _id: tid,
-                title: `Dummy Task No.${idx}`,
-                description: `This is dummy task No.${idx}`,
-            }));
+            const projectIds = getProjectIds();
+            for (const projectId of projectIds) {
+                const columnIds = getColumnIds();
+                const taskIds = getTaskIds();
 
-            await Projects.createOneProject(projectInfo);
+                const projectInfo = {
+                    _id: projectId,
+                    name: `TestProject_${projectId.toString().slice(-4)}`,
+                    description: 'This is a project created by default (for development majorly.',
+                    ownerId: userId,
+                    columnIds,
+                    taskIds,
+                };
 
-            for (const taskInfo of tasksInfo) {
-                await Tasks.createOneTask(taskInfo);
-            }
+                const columnsInfo = columnIds.map((cid, idx) => ({
+                    _id: cid,
+                    name: `Dummy Col No.${cid.toString().slice(-4)}_${idx}`,
+                    description: `This is dummy col No.${cid.toString().slice(-4)}_${idx}`,
+                    taskIds: taskIds.filter((_, tidx) => tidx % columnIds.length === idx),
+                }));
 
-            for (const colInfo of columnsInfo) {
-                await Columns.createOneColumn(colInfo);
+                const tasksInfo = taskIds.map((tid, idx) => ({
+                    _id: tid,
+                    title: `Dummy Task No.${idx}`,
+                    description: `This is dummy task No.${idx}`,
+                }));
+
+                await Projects.createOneProject(projectInfo);
+
+                for (const taskInfo of tasksInfo) {
+                    await Tasks.createOneTask(taskInfo);
+                }
+
+                for (const colInfo of columnsInfo) {
+                    await Columns.createOneColumn(colInfo);
+                }
             }
         }
-    }
 
-    await db.serverConfig.close();
+        await db.serverConfig.close();
+    },
 };

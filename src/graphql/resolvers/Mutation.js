@@ -1,9 +1,9 @@
 const { AuthenticationError } = require('apollo-server');
-const { getToken, createUser } = require('../../authentication/auth');
-const { Projects, Tasks, Columns } = require('../../database');
+const { /* getToken, */ createUser } = require('../../authentication/auth');
+const { Projects, Tasks, Columns, dummyUser } = require('../../database');
 
 const addProject = async (_, args, context) => {
-    if (!context.user) throw new AuthenticationError('You must be logged in to perform this action');
+    if (context.user === dummyUser) throw new AuthenticationError('You must be logged in to perform this action');
 
     if (!args.name || !args.ownerId) {
         throw `[graphql/resolvers/Mutation.js] name and ownerId are required in order to add new project`;
@@ -153,13 +153,13 @@ const deleteColumn = async (_, args, context) => {
     return deletedColumn;
 };
 
-const login = async (_, args) => {
-    if (!args.username || !args.password) {
-        throw `[graphql/resolvers/Mutation.js] username and password are required in order to login`;
-    }
-
-    return { token: await getToken(args.username, args.password) };
-};
+// const login = async (parent, args) => {
+//     if (!args.username || !args.password) {
+//         throw `[graphql/resolvers/Mutation.js] username and password are required in order to login`;
+//     }
+//
+//     return { token: await getToken(args.username, args.password) };
+// };
 
 const signup = async (_, args) => {
     const { username, email, password } = args;
@@ -182,6 +182,6 @@ module.exports = {
     addColumn,
     updateColumn,
     deleteColumn,
-    login,
+    // login,
     signup,
 };
