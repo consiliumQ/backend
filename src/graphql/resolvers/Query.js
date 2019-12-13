@@ -1,4 +1,4 @@
-const { Users, Projects, Tasks } = require('../../database');
+const { Users, Projects, Tasks, Columns } = require('../../database');
 
 // arg -> ownerId?
 const projects = async (par, args, ctx) => {
@@ -22,10 +22,10 @@ const project = async (_, args, ctx) => {
     return targetProject;
 };
 
-// args: projectId, columnId, taskId
-// I don't think we really need this
-// const tasks = async (_, args) => {};
-
+const column = async (_, args) => {
+    const foundColumn = await Columns.getColumnById(args.columnId);
+    return foundColumn;
+};
 const task = async (_, args) => {
     const foundTask = await Tasks.getTaskById(args.taskId);
     return foundTask;
@@ -39,7 +39,7 @@ const user = async (_, args, ctx) => {
 module.exports = {
     projects,
     project,
-    // tasks,
+    column,
     task,
     user,
 };

@@ -48,6 +48,7 @@ const typeDefs = gql`
         projects(ownerId: ID!): [Project]
         project(projectId: ID): Project
         # tasks(projectId: ID!, columnId: ID, taskId: ID): [Task]
+        column(columnId: ID): Column
         task(taskId: ID!): Task
         user: User
     }
@@ -61,7 +62,7 @@ const typeDefs = gql`
     }
 
     input UpdateColumn {
-        columnId: ID!
+        columnId: ID
         name: String
         description: String
         taskIds: [ID!]
