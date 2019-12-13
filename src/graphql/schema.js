@@ -94,6 +94,7 @@ const typeDefs = gql`
         # Column
         addColumn(name: String!, projectId: ID!, description: String): Column # Project # I thought return a Project type can auto update cache in the frontend, not really
         updateColumn(updateColumnArray: [UpdateColumn]): [Column]
+        updateOneColumn(columnId: ID!, updateColumnObj: UpdateColumn): Column
         deleteColumn(columnId: ID!): Column
     }
 `;

@@ -12,7 +12,7 @@ const getUserIds = (numOfUsr = 3) => Array.from(Array(numOfUsr).keys()).map(() =
 
 module.exports = async () => {
     const db = await mongoConnect();
-    db.dropDatabase();
+    // db.dropDatabase();
 
     const ownerId = ObjectId('5ded787d0ea584c3dd89ddc0'); // manually generated dummy userId
     const userIds = [ownerId, ...getUserIds(4)];

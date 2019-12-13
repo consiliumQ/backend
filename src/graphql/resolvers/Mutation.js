@@ -128,6 +128,20 @@ const updateColumn = async (_, args) => {
 
     return updatedColumns;
 };
+
+const updateOneColumn = async (_, args) => {
+    if (!args.columnId) {
+        throw `[graphql/resolvers/Mutation.js] columnId is required in order to update a column`;
+    }
+
+    if (args.columnId.constructor !== String) {
+        throw `[graphql/resolvers/Mutation.js] Invalid input type for columnId`;
+    }
+
+    const updatedColumn = await Columns.updateOneColumn(args.columnId, args.updateColumnObj);
+    return updatedColumn;
+};
+
 const deleteColumn = async (_, args) => {
     if (!args.columnId) {
         throw `[graphql/resolvers/Mutation.js] columnId is required in order to delete a column`;
@@ -150,5 +164,6 @@ module.exports = {
     deleteTask,
     addColumn,
     updateColumn,
+    updateOneColumn,
     deleteColumn,
 };
