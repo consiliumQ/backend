@@ -44,6 +44,10 @@ const typeDefs = gql`
         assignee: User
     }
 
+    type Authentication {
+        token: String!
+    }
+
     type Query {
         projects(ownerId: ID!): [Project]
         project(projectId: ID): Project
@@ -97,6 +101,9 @@ const typeDefs = gql`
         updateColumn(updateColumnArray: [UpdateColumn]): [Column]
         updateOneColumn(columnId: ID!, updateColumnObj: UpdateColumn): Column
         deleteColumn(columnId: ID!): Column
+        # Authentication
+        # login(username: String!, password: String!): Authentication
+        signup(username: String!, email: String!, password: String!): Boolean
     }
 `;
 

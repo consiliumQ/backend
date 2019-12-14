@@ -17,10 +17,13 @@
     },
     "homepage": "https://github.com/consiliumQ/backend#readme",
     "dependencies": {
+        "@okta/jwt-verifier": "^1.0.0",
+        "@okta/okta-sdk-nodejs": "^3.1.0",
         "apollo-server": "^2.9.9",
         "dotenv": "^8.2.0",
         "graphql": "^14.5.8",
-        "mongodb": "^3.3.5"
+        "mongodb": "^3.3.5",
+        "node-fetch": "^2.6.0"
     },
     "devDependencies": {
         "babel-eslint": "^10.0.3",
