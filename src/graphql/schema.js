@@ -44,6 +44,10 @@ const typeDefs = gql`
         assignee: User
     }
 
+    type Authentication {
+        token: String!
+    }
+
     type Query {
         projects(ownerId: ID!): [Project]
         project(projectId: ID): Project
@@ -95,6 +99,9 @@ const typeDefs = gql`
         addColumn(name: String!, projectId: ID!, description: String): Column # Project # I thought return a Project type can auto update cache in the frontend, not really
         updateColumn(updateColumnArray: [UpdateColumn]): [Column]
         deleteColumn(columnId: ID!): Column
+        # Authentication
+        # login(username: String!, password: String!): Authentication
+        signup(username: String!, email: String!, password: String!): Boolean
     }
 `;
 

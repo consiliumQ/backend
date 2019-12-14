@@ -1,4 +1,4 @@
-const seed = require('./seed');
+const { seed, dummyUser } = require('./seed');
 const Users = require('./Users');
 const Projects = require('./Projects');
 const Columns = require('./Columns');
@@ -10,4 +10,5 @@ module.exports = {
     Projects,
     Columns,
     Tasks,
+    dummyUser,
 };
