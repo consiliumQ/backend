@@ -1,8 +1,17 @@
 const { Users, Projects, Tasks, Columns } = require('../../database');
+const cacheData = require('../../database/redis');
 
-// arg -> ownerId?
 const projects = async (par, args, ctx) => {
     return await Projects.getProjectsByUserId(ctx.user.userId);
+};
+
+const projectsFromCache = async (_, args) => {
+    try {
+        const allProject = await cacheData.getAllProjectsByOwnerId(args.ownerId);
+        return allProject;
+    } catch (e) {
+        console.log(e);
+    }
 };
 
 const project = async (_, args, ctx) => {
@@ -38,6 +47,7 @@ const user = async (_, args, ctx) => {
 
 module.exports = {
     projects,
+    projectsFromCache,
     project,
     column,
     task,

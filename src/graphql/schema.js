@@ -24,6 +24,12 @@ const typeDefs = gql`
         columns: [Column]! # order matters
     }
 
+    type CachedProject {
+        _id: ID!
+        name: String!
+        ownerId: String!
+    }
+
     type Column {
         _id: ID!
         name: String!
@@ -46,6 +52,7 @@ const typeDefs = gql`
 
     type Query {
         projects(ownerId: ID!): [Project]
+        projectsFromCache(ownerId: ID!): [CachedProject]
         project(projectId: ID): Project
         # tasks(projectId: ID!, columnId: ID, taskId: ID): [Task]
         column(columnId: ID): Column
@@ -86,6 +93,7 @@ const typeDefs = gql`
     type Mutation {
         # Project
         addProject(name: String!, ownerId: ID!, description: String): Project
+        addProjectToCache(name: String!, ownerId: ID!): CachedProject
         updateProject(projectId: ID!, updateProjectObj: UpdateProject): Project
         deleteProject(projectId: ID!): Project
         # Task

@@ -1,4 +1,6 @@
 const { Projects, Tasks, Columns } = require('../../database');
+const cacheData = require('../../database/redis');
+const uuid = require('node-uuid');
 
 const addProject = async (_, args) => {
     if (!args.name || !args.ownerId) {
@@ -20,6 +22,33 @@ const addProject = async (_, args) => {
     }
     const addedProject = await Projects.createOneProject(args);
     return addedProject;
+};
+
+const addProjectToCache = async (_, args) => {
+    if (!args.name || !args.ownerId) {
+        throw `[graphql/resolvers/Mutation.js] name and ownerId are required in order to add new project`;
+    }
+
+    if (args.name.constructor !== String) {
+        throw `[graphql/resolvers/Mutation.js] Invalid input type for project name`;
+    }
+
+    if (args.ownerId.constructor !== String) {
+        throw `[graphql/resolvers/Mutation.js] Invalid input type for name for new project`;
+    }
+
+    let newProject = {
+        _id: uuid.v4(),
+        name: args.name,
+        ownerId: args.ownerId,
+    };
+
+    try {
+        const addedProject = await cacheData.addProject(newProject);
+        return addedProject;
+    } catch (e) {
+        console.log(e);
+    }
 };
 const updateProject = async (_, args) => {
     if (!args.projectId) {
@@ -157,6 +186,7 @@ const deleteColumn = async (_, args) => {
 
 module.exports = {
     addProject,
+    addProjectToCache,
     updateProject,
     deleteProject,
     addTask,
