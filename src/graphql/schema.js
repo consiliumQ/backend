@@ -28,6 +28,11 @@ const typeDefs = gql`
         _id: ID!
         name: String!
         ownerId: String!
+        description: String
+    } 
+
+    type Token {
+        accessToken: String
     }
 
     type Column {
@@ -58,6 +63,7 @@ const typeDefs = gql`
         column(columnId: ID): Column
         task(taskId: ID!): Task
         user: User
+        token: Token
     }
 
     input UpdateProject {
@@ -93,7 +99,7 @@ const typeDefs = gql`
     type Mutation {
         # Project
         addProject(name: String!, ownerId: ID!, description: String): Project
-        addProjectToCache(name: String!, ownerId: ID!): CachedProject
+        addProjectToCache(name: String!, ownerId: ID!, description: String): CachedProject
         updateProject(projectId: ID!, updateProjectObj: UpdateProject): Project
         deleteProject(projectId: ID!): Project
         # Task
@@ -105,6 +111,9 @@ const typeDefs = gql`
         updateColumn(updateColumnArray: [UpdateColumn]): [Column]
         updateOneColumn(columnId: ID!, updateColumnObj: UpdateColumn): Column
         deleteColumn(columnId: ID!): Column
+        # Auth
+        signup(username: String!, email: String!, password: String!): Boolean
+        addToken(accessToken: String!): Token
     }
 `;
 

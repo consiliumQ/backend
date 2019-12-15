@@ -7,6 +7,7 @@ bluebird.promisifyAll(redis.RedisClient.prototype);
 bluebird.promisifyAll(redis.Multi.prototype);
 
 const PROJECT_CACHE_KEY = 'project';
+const TOKEN_KEY = 'token';
 
 const addProject = async obj => {
     await client.hsetAsync(PROJECT_CACHE_KEY, obj._id, JSON.stringify(obj));
@@ -26,7 +27,20 @@ const getAllProjectsByOwnerId = async ownerId => {
     return projectsByOwnerId;
 };
 
+const addNewToken = async obj => {
+    await client.setAsync(TOKEN_KEY, JSON.stringify(obj));
+    const addedToken = await client.getAsync(TOKEN_KEY);
+    return JSON.parse(addedToken);
+}
+
+const getToken = async () => {
+    const token = await client.getAsync(TOKEN_KEY);
+    return JSON.parse(token);
+}
+
 module.exports = {
     addProject,
     getAllProjectsByOwnerId,
+    addNewToken,
+    getToken
 };

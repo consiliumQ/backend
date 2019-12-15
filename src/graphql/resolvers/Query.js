@@ -1,8 +1,8 @@
 const { Users, Projects, Tasks, Columns } = require('../../database');
 const cacheData = require('../../database/redis');
 
-const projects = async (par, args, ctx) => {
-    return await Projects.getProjectsByUserId(ctx.user.userId);
+const projects = async (par, args, context) => {
+    return await Projects.getProjectsByUserId(context.user.userId);
 };
 
 const projectsFromCache = async (_, args) => {
@@ -14,15 +14,24 @@ const projectsFromCache = async (_, args) => {
     }
 };
 
-const project = async (_, args, ctx) => {
+const token = async () => {
+    try {
+        const token = await cacheData.getToken();
+        return token;
+    } catch(e) {
+        console.log(e);
+    }
+}
+
+const project = async (_, args, context) => {
     const { projectId } = args;
 
     let targetProject;
-    if (ctx.user) {
+    if (context.user) {
         if (projectId) {
             targetProject = await Projects.getProjectById(projectId);
         } else {
-            [targetProject] = await Projects.getProjectsByUserId(ctx.user.userId);
+            [targetProject] = await Projects.getProjectsByUserId(context.user.userId);
         }
     } else {
         throw new Error('Usre not logged in!');
@@ -40,8 +49,8 @@ const task = async (_, args) => {
     return foundTask;
 };
 
-const user = async (_, args, ctx) => {
-    const foundUser = await Users.getUserById(ctx.user.userId);
+const user = async (_, args, context) => {
+    const foundUser = await Users.getUserById(context.user.userId);
     return foundUser;
 };
 
@@ -52,4 +61,5 @@ module.exports = {
     column,
     task,
     user,
+    token
 };

@@ -1,5 +1,5 @@
 const { Projects } = require('../../database');
 
 module.exports = {
-    projects: async (par, args, ctx) => await Projects.getProjectsByUserId(ctx.user.userId),
+    projects: async (par, args, context) => await Projects.getProjectsByUserId(context.user.userId),
 };

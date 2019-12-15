@@ -4,6 +4,7 @@ const Users = require('./Users');
 const Projects = require('./Projects');
 const Columns = require('./Columns');
 const Tasks = require('./Tasks');
+const CacheData = require('../database/redis');
 
 const getProjectIds = (numOfPrj = 4) => Array.from(Array(numOfPrj).keys()).map(() => ObjectId());
 const getColumnIds = (numOfCol = 3) => Array.from(Array(numOfCol).keys()).map(() => ObjectId());
@@ -14,7 +15,7 @@ module.exports = async () => {
     const db = await mongoConnect();
     // db.dropDatabase();
 
-    const ownerId = ObjectId('5ded787d0ea584c3dd89ddc0'); // manually generated dummy userId
+    const ownerId = ObjectId(process.env.DUMMY_USER_ID); // manually generated dummy userId
     const userIds = [ownerId, ...getUserIds(4)];
 
     for (const userId of userIds) {
@@ -34,11 +35,18 @@ module.exports = async () => {
             const projectInfo = {
                 _id: projectId,
                 name: `TestProject_${projectId.toString().slice(-4)}`,
-                description: 'This is a project created by default (for development majorly.',
+                description: 'This is a project created by default (for development majorly).',
                 ownerId: userId,
                 columnIds: [],
                 taskIds: [],
             };
+
+            const projectInfoForRedis = {
+                _id: projectId.toString(),
+                name:`TestProject_${projectId.toString().slice(-4)}`,
+                description: 'This is a project created by default (for development majorly).',
+                ownerId: userId
+            }
 
             const columnsInfo = columnIds.map((cid, idx) => ({
                 _id: cid,
@@ -57,6 +65,7 @@ module.exports = async () => {
             }));
 
             await Projects.createOneProject(projectInfo);
+            await CacheData.addProject(projectInfoForRedis);
 
             for (const taskInfo of tasksInfo) {
                 await Tasks.createOneTask(taskInfo);
